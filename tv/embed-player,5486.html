@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pl" style="height:100%">
+    <head>
+                    <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        
+                    <title>Oficjalny portal miasta Gdańska</title>
+            <meta name="description" content="Miasto Gdańsk. Aktualne wiadomości z Gdańska, sport, kultura, edukacja, komunikacja, kalendarz wydarzeń, informacje urzędowe, mapa, kamery internetowe.">
+            <meta name="author" content="Gdańskie Centrum Multimedialne" />
+        
+                    <base href="" target="_parent"/>
+            <link rel="canonical" href="embed-player,5486.html">
+            <script src="../dist/runtime.3bd10edb.js"></script>
+            <base href="" target="_parent"/>
+            </head>
+     <body style="margin:0; overflow:hidden; height:100%;">
+        	
+	
+				
+
+<link href="../dist/css/main/player.dc74bff6.css" rel="stylesheet">
+<script src="../videojs/video.js" ></script>
+<script src="../videojs/lang/pl.js" ></script>
+<script src="../videojs/nuevo.min.js" ></script>
+<script src="https://www.gdansk.pl/videojs/plugins/videojs.offline.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fitvids/1.2.0/jquery.fitvids.min.js" integrity="sha512-/2sZKAsHDmHNoevKR/xsUKe+Bpf692q4tHNQs9VWWz0ujJ9JBM67iFYbIEdfDV9I2BaodgT5MIg/FTUmUv3oyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+        var category = 2;
+        const prepareQuery = (query = {}) =>
+                Object.keys(query).length > 0
+                        ? '?' + Object.entries(query).map(([key, value]) => `${key}=${value}`).join('&')
+                        : '';
+
+        function hapi(hapi, options = {}) {
+                let get = {};
+                if (typeof options.get !== 'undefined') {
+                        options = {
+                        method: 'GET',
+                        ...options
+                        };
+                        get = options.get;
+                }
+
+                if (typeof options.post !== 'undefined') {
+                        options = {
+                        method: 'POST',
+                        body: JSON.stringify(options.post),
+                        ...options
+                        };
+                }
+
+                return fetch(`https://www.gdansk.pl/hapi/${hapi}${prepareQuery(get)}`, options);
+                }
+
+        async function hapiGet(hapi, get = {}) {
+                const response = await fetch(`https://www.gdansk.pl/hapi/${hapi}${prepareQuery(get)}`, { method: 'GET' });
+                return await response.json();
+                }
+
+        async function hapiPost(hapi, post = {}, get = {}) {
+                const response = await fetch(`https://www.gdansk.pl/hapi/${hapi}${prepareQuery(get)}`, { method: 'POST', body: JSON.stringify(post) });
+                return await response.json();
+                }
+
+
+
+        window.onbeforeunload = function() {
+        saveFormData();
+        //return 'ss';
+        }
+
+        function saveFormData() {
+        console.log('saved');
+        hapi('statystykiVideoTest', { get: { videoId: 4, url: 'dddddd', getPublishFrom: '2024-01-15 00:00:00', player: 5 }}).then(r => r.json()).then(d => console.log(d));
+
+        }
+
+
+        async function statistics(plikHapi, videoId, getPublishFrom, player)
+                {
+                //var userAgent = navigator.userAgent;
+                //alert(navigator.appVersion);
+                if (/Firefox/.test(navigator.userAgent))
+                        {
+                        //alert ('Frefox');
+                        }
+                if (/Chrome/.test(navigator.userAgent) && /Google Inc./.test(navigator.vendor))
+                        {
+                        //alert ('Chrome');
+                        }
+                if (/Chrome/.test(navigator.userAgent) && /Apple Computer, Inc./.test(navigator.vendor))
+                        {
+                        //alert ('Safari');
+                        }
+                        //alert(category);
+                if(category != '18') // nie kamery
+                        {
+                        hapi(plikHapi, { get: { videoId: videoId, url: document.URL, getPublishFrom: getPublishFrom, player: player }}).then(r => r.json()).then(d => console.log(d));
+                        }
+                };
+
+        if(category == '18')
+                {
+                statistics_cam('statystykiVideo',5486, "2025-06-24 21:41:06", 0);
+                }
+
+        async function statistics_cam(plikHapi, videoId, getPublishFrom, player)
+                {
+                hapi(plikHapi, { get: { videoId: videoId, url: document.URL, getPublishFrom: getPublishFrom, player: player }}).then(r => r.json()).then(d => console.log(d));
+                };
+
+
+
+</script>
+
+
+	
+        		<video
+			id="player"
+			crossorigin="anonymous"
+			preload="auto"
+			controls
+			class="video-js vjs-fluid rounded"
+			name="Nowa Politechniczna"
+			data-setup='{ "poster":"https://image.cloudgdansk.pl/v/950/20251750794163.jpg" }'
+			>
+										<source src="https://tv.multimediagdansk.pl/Magazyn2025/streams/875116129885670795898768/875116129885670795898768.m3u8" default type="application/x-mpegURL" title="auto"/>
+											</video>
+
+		<script>
+			const format = 875116129885670795898768 === 0 && 0 !== 0
+			? { aspectRatio: '9:16' }
+			: {};
+
+			var player = videojs('player', {language: 'pl', ...format,});
+			var videoId = '';
+			var test = '';
+
+			player.on('play', function() {
+				if (videoId == '')
+					{
+					videoId = 5486;
+					statistics('statystykiVideo',videoId, "2025-06-24 21:41:06",  1);
+					}
+			});
+			// Ustawienie czasu rozpoczęcia
+			const queryString = window.location.search;
+			const urlParams = queryString.substring(1).split('&'); // Usuń znak "?" i podziel parametry
+			let startTime;
+
+			urlParams.forEach(param => {
+				const [key, value] = param.split('=');
+				if (key === 'start') {
+					startTime = parseFloat(value);
+				}
+			});
+
+			if (startTime) {
+				player.ready(function () {
+					if (!isNaN(startTime)) {
+						player.currentTime(startTime);
+					}
+					player.play();
+					player.controlBar.progressControl.seekBar.update();
+
+					// Blokowanie cofania poniżej startTime
+					player.on('seeking', function () {
+						const currentTime = player.currentTime();
+						if (currentTime < startTime) {
+							player.currentTime(startTime); // Ustaw powrót do startTime
+						}
+					});
+
+					// Opcjonalne: Blokowanie również podczas zmiany czasu w trakcie odtwarzania
+					player.on('timeupdate', function () {
+						const currentTime = player.currentTime();
+						if (currentTime < startTime) {
+							player.currentTime(startTime); // Powrót do startTime
+						}
+					});
+				});
+			}
+
+			player.on('error', function() {
+				var source = player.currentSource();
+				if (source.type === 'application/x-mpegURL') {
+						player.src({
+								type: 'video/mp4',
+								src: 'https://tv.multimediagdansk.pl/Magazyn2025/streams/875116129885670795898768.mp4'
+						});
+				}
+			});
+			player.nuevo({
+				shareMenu: false,
+				contextMenu: false,
+				singlePlay:true,
+				snapshot:true
+			});
+
+		</script>
+	
+
+
+	
+                        
+
+
+	<script type="application/ld+json">
+		{
+			"@context": "http://schema.org",
+			"@type": "VideoObject",
+			"contentUrl": "https://tv.multimediagdansk.pl/Magazyn2025/streams/875116129885670795898768.mp4",
+			"name": "Nowa Politechniczna",
+			"description": "",
+			"thumbnailUrl": "https://image.cloudgdansk.pl/v/950/20251750794163.jpg",
+			"uploadDate": "2025-06-24T00:00:00+01:00",
+			"author": {
+				"@type": "Organization",
+				"name": "Gdańskie Centrum Multimedialne"
+			},
+			"publisher": {
+				"@type": "Organization",
+				"name": "Gdańskie Centrum Multimedialne"
+			},
+			"videoQuality": "HD",
+			"duration": ""
+		}
+	</script>
+
+
+
+
+
+        
+<style>
+.externalIframe iframe {
+        width:100%;
+        height:100%
+}
+.vjs-texttrack-settings {
+  display: none;
+}
+.vjs-text-track-cue  div {
+        display:inline-block !important;
+        padding:5px 10px;
+        text-shadow: none !important;
+        background:#000000 !important;
+}
+</style>
+	
+
+
+
+    </body>
+</html>
