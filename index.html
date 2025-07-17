@@ -81,12 +81,7 @@
 <header class="container-fluid container-xl vignette pt-3 pb-md-3 ">
 	<div class="row">
 		<div class="col-12 col-lg-auto logo d-flex justify-content-center justify-content-md-start logo align-items-center mb-2 mb-lg-0">
-			<a class="me-lg-4 mb-2 mb-lg-0" rel="noopener" href="https://www.gdansk.pl/">
 				<img src="images/logo-www.svg" alt="Logo www.gdansk.pl" class="default img-fluid lazyload top-logo" id="topLogo"/>
-			</a>
-			<button class="navbar-toggler d-lg-none ms-auto" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-				<i class="fa-solid fa-bars font-size-10"></i>
-			</button>
 		</div>
 
 	</div>
@@ -108,6 +103,15 @@
 
 
                             <style>
+
+    .frame {
+        --s: 10px; /* control the size */
+        padding: var(--s);
+        border: calc(2*var(--s)) solid #0000;
+        outline: 1px solid #44ab4d;
+        outline-offset: calc(-1*var(--s));
+        background: conic-gradient(from 90deg at 1px 1px,#0000 25%,#44ab4d 0);
+    }
 
 	.menu-top .top-logo {
 		transition: opacity 0.3s ease;
@@ -190,73 +194,6 @@
 }
 
 </style>
-
-
-
-
-
-
-
-
-<div id="mySidenav" class="sidenav">
-	<ul>
-					<li>
-				<button data-click="sideBar.switchTheme" aria-label="przycisk do przełącznienia pomiędzy wersją kontrastową a graficzną strony" class="btn-theme-light">
-					<i class="fas fa-adjust"></i>
-				</button>
-				<hr>
-			</li>
-				<li>
-			<button data-click="sideBar.decreaseText" aria-label="Zmniejsz wielkość czcionki">
-				<i class="fas fa-minus"></i>
-			</button>
-		</li>
-		<li>
-			<button data-click="sideBar.resetText" class="align-middle" aria-label="Zresetuj wielkość czcionki" style="font-size:0.6em;margin-bottom:15px">
-				RESET
-			</button>
-
-		</li>
-		<li>
-			<button data-click="sideBar.increaseText" aria-label="Zwiększ wielkość czcionki">
-				<i class="fas fa-plus"></i>
-			</button>
-			<hr>
-		</li>
-		<li>
-			<div>
-				<a href="https://download.cloudgdansk.pl/gdansk-pl/d/202307214472/informacja-o-urzedzie-miejskim-w-gdansku-w-etr_31-07-2023.pdf" class="h-100" aria-label="Gdańsk bez barier" target="_blank">
-					<img style="max-width:50px" class="img-fluid" src="images/easy-to-read.svg" alt="Logo www.gdansk.pl">
-				</a>
-				<hr>
-			</div>
-		</li>
-		<li>
-			<div>
-				<a href="https://www.gdansk.pl/gdansk-bez-barier" class="h-100" aria-label="Gdańsk bez barier" target="_blank">
-					<i class="fa-solid fa-wheelchair"></i>
-				</a>
-			</div>
-			<hr>
-		</li>
-		<li>
-			<div>
-				<a href="https://www.gdansk.pl/gdansk-bez-barier#pjm" class="h-100" aria-label="Ułatwienia dla głuchych" target="_blank">
-					<i class="fa-solid fa-ear-deaf"></i>
-				</a>
-			</div>
-			<hr>
-		</li>
-		<li>
-			<div data-click="sideBar.toggleNav" class="order-1 order-lg-2">
-				<button aria-label="Zwiń narzędzia ułatwienia dla niedowidzących">
-					<i class="fas fa-times"></i>
-				</button>
-			</div>
-		</li>
-	</ul>
-</div>
-
             
             <main class="flex-fill d-flex flex-column">
                
@@ -344,7 +281,7 @@
 			<div class="container-fluid container-xl">
 				<div class="row">
 					<div class="col-12 col-lg-9 mx-auto">
-						<img class="img-fluid" data-aos="zoom-in" src="images/GPW-tramwaje.png" alt=""/>
+						<img class="img-fluid frame" data-aos="zoom-in" src="images/GPW-tramwaje_2.png" alt=""/>
 
 					</div>
 				</div>
@@ -363,7 +300,11 @@
 				<div class="row">
 					<div class="col-12 col-lg-9 mx-auto">
 						<div style="width:100%; position:relative;">
-							<iframe id="video5486" src="tv/embed-player,5486.html" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width: 100%; height: auto; aspect-ratio: 16/9; display: block;"></iframe>
+                            <iframe width="717" height="404" src="https://www.youtube.com/embed/_SchK7k_mW8?si=jwYFFmi-MQHoM7xJ"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin" 
+                                style="width: 100%; height: auto; aspect-ratio: 16/9; display: block;" allowfullscreen></iframe>
 						</div>
 
 					</div>
