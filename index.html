@@ -207,6 +207,59 @@
 				outline: 0.06em solid currentColor;
 				outline-offset: 0.06em;
 			}
+			.route-cost-planned {
+				margin-top: 0.35em;
+				font-size: 0.5em;
+			}
+			.route-cost-planned-amount {
+				position: relative;
+				display: inline-block;
+				font-weight: bold;
+				text-decoration: underline dotted;
+				text-decoration-thickness: 0.04em;
+				text-underline-offset: 0.08em;
+				cursor: help;
+			}
+			.route-cost-planned-amount:focus-visible {
+				outline: 0.06em solid currentColor;
+				outline-offset: 0.06em;
+			}
+			.route-cost-tooltip {
+				position: absolute;
+				left: 50%;
+				bottom: calc(100% + 0.75rem);
+				z-index: 10;
+				width: max-content;
+				max-width: min(22rem, calc(100vw - 3rem));
+				padding: 0.65rem 0.85rem;
+				border-radius: 0.35rem;
+				background: #001e43;
+				box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.3);
+				color: #fff;
+				font-size: 1rem;
+				font-weight: normal;
+				line-height: 1.35;
+				text-align: left;
+				text-transform: none;
+				opacity: 0;
+				pointer-events: none;
+				transform: translate(-50%, 0.25rem);
+				transition: opacity 0.15s ease, transform 0.15s ease;
+			}
+			.route-cost-tooltip::after {
+				position: absolute;
+				top: 100%;
+				left: 50%;
+				border: 0.45rem solid transparent;
+				border-top-color: #001e43;
+				content: '';
+				transform: translateX(-50%);
+			}
+			.route-cost-planned-amount:hover .route-cost-tooltip,
+			.route-cost-planned-amount:focus .route-cost-tooltip {
+				opacity: 1;
+				transform: translate(-50%, 0);
+			}
 			.route-cost-dialog {
 				width: min(1100px, calc(100% - 2rem));
 				max-width: none;
@@ -270,7 +323,14 @@
 			}
 		</style>
 		<div id="route-cost-summary" class="route-cost-summary mt-3 p-4 text-center" aria-live="polite">
-			WYDALIŚMY JUŻ <button type="button" id="route-cost-amount" class="route-cost-amount-button" aria-haspopup="dialog" aria-controls="route-cost-dialog">19 591 587,00 ZŁ</button>. POWSTAŁO <strong>0 KM</strong> TRASY
+			<div>WYDALIŚMY JUŻ <button type="button" id="route-cost-amount" class="route-cost-amount-button" aria-haspopup="dialog" aria-controls="route-cost-dialog">19 591 587,00 ZŁ</button>. POWSTAŁO <strong>0 KM</strong> TRASY</div>
+			<div class="route-cost-planned">
+				PLANUJEMY WYDAĆ JESZCZE
+				<span class="route-cost-planned-amount" tabindex="0" aria-describedby="route-cost-planned-tooltip">
+					<span id="route-cost-planned-amount">792 296 227,00 ZŁ</span>
+					<span id="route-cost-planned-tooltip" class="route-cost-tooltip" role="tooltip">Kwota wynika z bieżącej wieloletniej prognozy finansowej miasta</span>
+				</span>
+			</div>
 		</div>
 		<dialog id="route-cost-dialog" class="route-cost-dialog" aria-labelledby="route-cost-dialog-title">
 			<div class="route-cost-dialog-content">
@@ -336,7 +396,9 @@
 		</div>
 		<script>
 			(async function updateRouteCostSummary() {
+				const plannedBudget = 811887814;
 				const amountElement = document.getElementById('route-cost-amount');
+				const plannedAmountElement = document.getElementById('route-cost-planned-amount');
 				const dialog = document.getElementById('route-cost-dialog');
 				const closeButton = document.getElementById('route-cost-dialog-close');
 				const tableBody = document.getElementById('route-cost-table-body');
@@ -441,8 +503,10 @@
 						return Number.isFinite(amount) ? sum + amount : sum;
 					}, 0);
 					const formattedTotal = currencyFormatter.format(total);
+					const formattedPlannedAmount = currencyFormatter.format(plannedBudget - total);
 
 					amountElement.textContent = formattedTotal.toLocaleUpperCase('pl-PL');
+					plannedAmountElement.textContent = formattedPlannedAmount.toLocaleUpperCase('pl-PL');
 					renderExpenses(rows);
 				} catch (error) {
 					console.error(error);
