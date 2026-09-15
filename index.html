@@ -171,7 +171,7 @@
 		<div class="dark-box bg-primary p-3">
 			<div class="container-fluid container-xl">
 				<div class="row">
-					<div class="col-12 pt-4 mt-3">
+					<div class="col-12">
 						
 
 	<div class="row       flex-fill">
@@ -185,6 +185,118 @@
 	<div class="noLink">
 		<div class="thumb">
 	
+		<style>
+			.route-cost-summary {
+				font-size: 5em;
+				line-height: 1.1;
+				text-transform: uppercase;
+			}
+			.route-cost-amount-button {
+				padding: 0;
+				border: 0;
+				background: transparent;
+				color: inherit;
+				font: inherit;
+				font-weight: bold;
+				text-decoration: underline;
+				text-decoration-thickness: 0.06em;
+				text-underline-offset: 0.08em;
+				cursor: pointer;
+			}
+			.route-cost-amount-button:focus-visible {
+				outline: 0.06em solid currentColor;
+				outline-offset: 0.06em;
+			}
+			.route-cost-dialog {
+				width: min(1100px, calc(100% - 2rem));
+				max-width: none;
+				max-height: 85vh;
+				padding: 0;
+				border: 0;
+				border-radius: 0.5rem;
+				box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.35);
+				color: #001e43;
+			}
+			.route-cost-dialog::backdrop {
+				background: rgba(0, 0, 0, 0.65);
+			}
+			.route-cost-dialog-content {
+				padding: 1.5rem;
+			}
+			.route-cost-dialog-header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 1rem;
+				margin-bottom: 1rem;
+			}
+			.route-cost-dialog-title {
+				margin: 0;
+			}
+			.route-cost-dialog-close {
+				padding: 0.25rem 0.75rem;
+				border: 0;
+				background: transparent;
+				color: inherit;
+				font-size: 2rem;
+				line-height: 1;
+				cursor: pointer;
+			}
+			.route-cost-table-wrapper {
+				max-height: calc(85vh - 6rem);
+				overflow: auto;
+			}
+			.route-cost-table {
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 1rem;
+			}
+			.route-cost-table th,
+			.route-cost-table td {
+				padding: 0.75rem;
+				border: 1px solid #d6dce3;
+				text-align: left;
+				vertical-align: top;
+			}
+			.route-cost-table th {
+				position: sticky;
+				top: 0;
+				background: #001e43;
+				color: #fff;
+			}
+			.route-cost-table td:nth-child(1),
+			.route-cost-table td:nth-child(2) {
+				white-space: nowrap;
+			}
+		</style>
+		<div id="route-cost-summary" class="route-cost-summary mt-3 p-4 text-center" aria-live="polite">
+			WYDALIŚMY JUŻ <button type="button" id="route-cost-amount" class="route-cost-amount-button" aria-haspopup="dialog" aria-controls="route-cost-dialog">19 591 587,00 ZŁ</button>. POWSTAŁO <strong>0 KM</strong> TRASY
+		</div>
+		<dialog id="route-cost-dialog" class="route-cost-dialog" aria-labelledby="route-cost-dialog-title">
+			<div class="route-cost-dialog-content">
+				<div class="route-cost-dialog-header">
+					<h2 id="route-cost-dialog-title" class="route-cost-dialog-title">Wydatki na trasę</h2>
+					<button type="button" id="route-cost-dialog-close" class="route-cost-dialog-close" aria-label="Zamknij">&times;</button>
+				</div>
+				<div class="route-cost-table-wrapper">
+					<table class="route-cost-table">
+						<thead>
+							<tr>
+								<th scope="col">Data</th>
+								<th scope="col">Kwota</th>
+								<th scope="col">Kontrahent</th>
+								<th scope="col">Opis</th>
+							</tr>
+						</thead>
+						<tbody id="route-cost-table-body">
+							<tr><td colspan="4">Ładowanie danych…</td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</dialog>
+
+
 		<div id="article-289864" class="card h-100 ">
 			<div class="row">
 				<div class="col my-auto 	
@@ -222,6 +334,122 @@
 
 						
 		</div>
+		<script>
+			(async function updateRouteCostSummary() {
+				const amountElement = document.getElementById('route-cost-amount');
+				const dialog = document.getElementById('route-cost-dialog');
+				const closeButton = document.getElementById('route-cost-dialog-close');
+				const tableBody = document.getElementById('route-cost-table-body');
+				const currencyFormatter = new Intl.NumberFormat('pl-PL', {
+					style: 'currency',
+					currency: 'PLN'
+				});
+				const dateFormatter = new Intl.DateTimeFormat('pl-PL');
+
+				amountElement.addEventListener('click', () => dialog.showModal());
+				closeButton.addEventListener('click', () => dialog.close());
+				dialog.addEventListener('click', event => {
+					if (event.target === dialog) {
+						dialog.close();
+					}
+				});
+
+				function parseCsv(csv) {
+					const rows = [];
+					let row = [];
+					let field = '';
+					let quoted = false;
+
+					for (let index = 0; index < csv.length; index += 1) {
+						const character = csv[index];
+
+						if (character === '"') {
+							if (quoted && csv[index + 1] === '"') {
+								field += '"';
+								index += 1;
+							} else {
+								quoted = !quoted;
+							}
+						} else if (character === ',' && !quoted) {
+							row.push(field);
+							field = '';
+						} else if (character === '\n' && !quoted) {
+							row.push(field);
+							rows.push(row);
+							row = [];
+							field = '';
+						} else if (character !== '\r') {
+							field += character;
+						}
+					}
+
+					if (field || row.length) {
+						row.push(field);
+						rows.push(row);
+					}
+
+					return rows;
+				}
+
+				function parseAmount(value) {
+					return Number((value || '').replace(/\s/g, '').replace(',', '.'));
+				}
+
+				function appendCell(row, value) {
+					const cell = document.createElement('td');
+					cell.textContent = value;
+					row.appendChild(cell);
+				}
+
+				function renderExpenses(rows) {
+					const expenses = rows.slice(1)
+						.filter(row => row.length >= 4 && /^\d{4}-\d{2}-\d{2}$/.test(row[0]))
+						.sort((first, second) => second[0].localeCompare(first[0]));
+
+					tableBody.textContent = '';
+					expenses.forEach(expense => {
+						const row = document.createElement('tr');
+						const amount = parseAmount(expense[1]);
+
+						appendCell(row, dateFormatter.format(new Date(`${expense[0]}T00:00:00`)));
+						appendCell(row, Number.isFinite(amount) ? currencyFormatter.format(amount) : expense[1]);
+						appendCell(row, expense[2]);
+						appendCell(row, expense[3]);
+						tableBody.appendChild(row);
+					});
+				}
+
+				function renderLoadError() {
+					tableBody.textContent = '';
+					const row = document.createElement('tr');
+					const cell = document.createElement('td');
+					cell.colSpan = 4;
+					cell.textContent = 'Nie udało się wczytać listy wydatków.';
+					row.appendChild(cell);
+					tableBody.appendChild(row);
+				}
+
+				try {
+					const response = await fetch('koszty-trasy.csv', { cache: 'no-store' });
+					if (!response.ok) {
+						throw new Error(`Nie udało się pobrać pliku CSV (${response.status})`);
+					}
+
+					const rows = parseCsv(await response.text());
+					const total = rows.slice(1).reduce((sum, row) => {
+						const amount = parseAmount(row[1]);
+						return Number.isFinite(amount) ? sum + amount : sum;
+					}, 0);
+					const formattedTotal = currencyFormatter.format(total);
+
+					amountElement.textContent = formattedTotal.toLocaleUpperCase('pl-PL');
+					renderExpenses(rows);
+				} catch (error) {
+					console.error(error);
+					renderLoadError();
+				}
+			})();
+		</script>
 	
 </div>
 	</div>
