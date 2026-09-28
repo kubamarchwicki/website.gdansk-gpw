@@ -296,8 +296,23 @@
 				cursor: pointer;
 			}
 			.route-cost-table-wrapper {
-				max-height: calc(85vh - 6rem);
+				max-height: calc(85vh - 9rem);
 				overflow: auto;
+			}
+			.route-cost-dialog-actions {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem 1.5rem;
+				margin-bottom: 1rem;
+			}
+			.route-cost-dialog-actions a {
+				color: inherit;
+				text-decoration: underline;
+				text-underline-offset: 0.15em;
+			}
+			.route-cost-copy-status {
+				margin: 0;
+				overflow-wrap: anywhere;
 			}
 			.route-cost-table {
 				width: 100%;
@@ -344,6 +359,11 @@
 				<div class="route-cost-dialog-header">
 					<h2 id="route-cost-dialog-title" class="route-cost-dialog-title">Wydatki na trasę</h2>
 					<button type="button" id="route-cost-dialog-close" class="route-cost-dialog-close" aria-label="Zamknij">&times;</button>
+				</div>
+				<div class="route-cost-dialog-actions">
+					<a href="koszty-trasy.csv" download="koszty-trasy.csv">Pobierz CSV</a>
+					<a href="#koszty" id="route-cost-copy-link">skopiuj link</a>
+					<p id="route-cost-copy-status" class="route-cost-copy-status" role="status"></p>
 				</div>
 				<div class="route-cost-table-wrapper">
 					<table class="route-cost-table">
@@ -408,6 +428,8 @@
 				const plannedAmountElement = document.getElementById('route-cost-planned-amount');
 				const dialog = document.getElementById('route-cost-dialog');
 				const closeButton = document.getElementById('route-cost-dialog-close');
+				const copyLink = document.getElementById('route-cost-copy-link');
+				const copyStatus = document.getElementById('route-cost-copy-status');
 				const tableBody = document.getElementById('route-cost-table-body');
 				const currencyFormatter = new Intl.NumberFormat('pl-PL', {
 					style: 'currency',
@@ -415,7 +437,39 @@
 				});
 				const dateFormatter = new Intl.DateTimeFormat('pl-PL');
 
-				amountElement.addEventListener('click', () => dialog.showModal());
+				function syncCostDialogWithHash() {
+					if (window.location.hash === '#koszty') {
+						if (!dialog.open) dialog.showModal();
+					} else if (dialog.open) {
+						dialog.close();
+					}
+				}
+
+				amountElement.addEventListener('click', () => {
+					window.location.hash = 'koszty';
+					syncCostDialogWithHash();
+				});
+				window.addEventListener('hashchange', syncCostDialogWithHash);
+				dialog.addEventListener('close', () => {
+					copyStatus.textContent = '';
+					if (window.location.hash === '#koszty') {
+						const url = new URL(window.location.href);
+						url.hash = '';
+						window.history.replaceState(window.history.state, '', url.href);
+					}
+				});
+				copyLink.addEventListener('click', async event => {
+					event.preventDefault();
+					const url = new URL(window.location.href);
+					url.hash = 'koszty';
+					try {
+						await navigator.clipboard.writeText(url.href);
+						copyStatus.textContent = 'Link skopiowany.';
+					} catch (error) {
+						copyStatus.textContent = `Nie udało się skopiować linku. Skopiuj adres: ${url.href}`;
+					}
+				});
+				syncCostDialogWithHash();
 				closeButton.addEventListener('click', () => dialog.close());
 				dialog.addEventListener('click', event => {
 					if (event.target === dialog) {
